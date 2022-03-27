@@ -222,7 +222,7 @@ void thresholding(std::vector<std::vector<int>> pixels, int width, int length)
 	{
 		for (int i = 0; i < pixels[j].size(); i++)
 		{
-			if (pixels[j][i] >= 192 && pixels[j][i] <= 256)
+			if (pixels[j][i] >= 192 && pixels[j][i] <= 255)
 			{
 				pixels[j][i] = 1;
 				countFreq[0]++;
