@@ -166,7 +166,7 @@ std::vector<std::vector<int>> readfile(int &width, int &length)
 
 	std::string filename = "imagefile.pgm";
 
-	std::string filetype = "P5";
+	std::string filetype = "P2";
 
 	std::stringstream ss;
 	ss << "# Median = " << median << std::endl;
