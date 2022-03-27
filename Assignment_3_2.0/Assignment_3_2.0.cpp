@@ -10,8 +10,9 @@ std::vector<std::vector<int>> readfile(int&, int&);
 std::vector<std::vector<int>> isNaN(std::vector<std::vector<std::string>>& rawData);
 int cleanImage(std::vector<std::vector<std::string>>& Data, int& i, int& j);
 void sortvector(std::vector<int>& v);
-void findmedian(std::vector<std::vector<int>> v);
+float findmedian(std::vector<std::vector<int>> v);
 void thresholding(std::vector <std::vector<int>>, int, int);
+void pgmPrint(std::string &filename, std::string &MagicNum, std::string &comment, int& width, int& length, int& maxGrey, std::vector<std::vector<int>>& pixelData);
 
 
 
@@ -28,7 +29,7 @@ int main() {
 
 	int width =0, length = 0;
 	std::vector<std::vector<int>> processedData = readfile(width, length);
-	findmedian(processedData);
+	
 	thresholding(processedData, width, length);
 	
 
@@ -81,9 +82,7 @@ std::vector<std::vector<int>> isNaN(std::vector<std::vector<std::string>>& rawDa
 
 			if (rawData[i][j] == "NaN")
 			{
-
 				int avg = cleanImage(rawData, i, j);
-				//int calVal = (std::stoi( rawData[i].at(j - 1) ) + std::stoi( rawData[i].at(j + 1) ) ) / 2;
 				Data[i].push_back(avg);
 
 			}
@@ -161,8 +160,23 @@ std::vector<std::vector<int>> readfile(int &width, int &length)
 	width = rawData.size();
 	length = rawData[0].size();
 
+	std::vector<std::vector<int>> cleanData = isNaN(rawData);
 
-	return isNaN(rawData);
+	float median = findmedian(cleanData);
+
+	std::string filename = "imagefile.pgm";
+
+	std::string filetype = "P2";
+
+	std::stringstream ss;
+	ss << "# Median = " << median << std::endl;
+	std::string comment = ss.str();
+
+	int maxGrey = 255;
+
+	pgmPrint(filename, filetype, comment, width, length, maxGrey, cleanData);
+
+	return cleanData;
 }
 
 void sortvector(std::vector<int>& v)
@@ -182,7 +196,7 @@ void sortvector(std::vector<int>& v)
 	}
 }
 
-void findmedian(std::vector<std::vector<int>> v)
+float findmedian(std::vector<std::vector<int>> v)
 {
 	std::vector<int> tempv;
 	float median = 0; 
@@ -207,11 +221,13 @@ void findmedian(std::vector<std::vector<int>> v)
 	//{
 	//	std::cout << tempv[k] << std::endl;
 	//}
-	std::cout << "median = " << median; // needs to be removed just prints median to terminal
-	std::ofstream output;
-	output.open("imagefile.pgm"); // change to name of image file
-	output << "# Median = " << median << std::endl;
-	output.close();
+	std::cout << "median = " << median << std::endl; // needs to be removed just prints median to terminal
+	//std::ofstream output;
+	//output.open("imagefile.pgm"); // change to name of image file
+	//output << "# Median = " << median << std::endl;
+	//output.close();
+
+	return median;
 }
 
 void thresholding(std::vector<std::vector<int>> pixels, int width, int length)
@@ -280,5 +296,34 @@ void thresholding(std::vector<std::vector<int>> pixels, int width, int length)
 	}
 	
 	outfile.close();
+
+}
+
+void pgmPrint(std::string& filename, std::string& magicNum, std::string& comment, int& width, int& length, int& maxGrey, std::vector<std::vector<int>>& pixelData)
+{
+	std::ofstream outfile;
+
+	outfile.open(filename);
+
+	outfile << magicNum << "\n";		//pgm type
+
+	outfile << comment << "\n";			//comment
+	
+
+	outfile << width << " " << length << "\n";		//dimensions
+	
+	outfile << maxGrey << "\n";						//maximum grey level
+
+	for (int j = 0; j < pixelData.size(); j++)		//pixel data
+	{
+		for (int i = 0; i < pixelData[j].size(); i++)
+		{
+			outfile << pixelData[j][i] << "\t";
+		}
+		outfile << "\n";
+	}
+
+	outfile.close();
+
 
 }
