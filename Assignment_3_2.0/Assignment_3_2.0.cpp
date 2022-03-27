@@ -11,7 +11,7 @@ std::vector<std::vector<int>> isNaN(std::vector<std::vector<std::string>>& rawDa
 int cleanImage(std::vector<std::vector<std::string>>& Data, int& i, int& j);
 void sortvector(std::vector<int>& v);
 void findmedian(std::vector<int> v);
-void thresholding(std::vector<int>);
+void thresholding(std::vector <std::vector<int>>);
 
 
 
@@ -27,6 +27,8 @@ int main() {
 	//findmedian(v); // change v to name of vector
 
 	std::vector<std::vector<int>> processedData = readfile();
+	thresholding(processedData);
+
 	return 0;
 }
 
@@ -200,7 +202,7 @@ void findmedian(std::vector<int> v)
 	output.close();
 }
 
-void thresholding(std::vector<int> pixels)
+void thresholding(std::vector<std::vector<int>> pixels)
 {
 	int countFreq[4] = { 0, 0, 0, 0 };
 	//The 0 index in 'countFreq' corresponds to the frequency of class 1.
@@ -211,35 +213,39 @@ void thresholding(std::vector<int> pixels)
 	std::ofstream outfile;
 	outfile.open("Segmented.pgm");
 
-	for (int i = 0; i < pixels.size(); i++)
+	for (int j = 0; j < pixels.size(); j++)
 	{
-		if (pixels[i] >= 192 && pixels[i] <= 255)
+		for (int i = 0; i < pixels[j].size(); i++)
 		{
-			pixels[i] = 1;
-			countFreq[0]++;
-		}
+			if (pixels[j][i] >= 192 && pixels[j][i] <= 256)
+			{
+				pixels[j][i] = 1;
+				countFreq[0]++;
+			}
 
-		else if (pixels[i] >= 128 && pixels[i] <= 191)
-		{
-			pixels[i] = 2;
-			countFreq[1]++;
-		}
+			else if (pixels[j][i] >= 128 && pixels[j][i] <= 191)
+			{
+				pixels[j][i] = 2;
+				countFreq[1]++;
+			}
 
-		else if (pixels[i] >= 64 && pixels[i] <= 127)
-		{
-			pixels[i] = 3;
-			countFreq[2]++;
-		}
+			else if (pixels[j][i] >= 64 && pixels[j][i] <= 127)
+			{
+				pixels[j][i] = 3;
+				countFreq[2]++;
+			}
 
-		else if (pixels[i] >= 0 && pixels[i] <= 63)
-		{
-			pixels[i] = 4;
-			countFreq[3]++;
-		}
+			else if (pixels[j][i] >= 0 && pixels[j][i] <= 63)
+			{
+				pixels[j][i] = 4;
+				countFreq[3]++;
+			}
 
-		else
-			std::cout << "Pixel not within range" << std::endl;
+			else
+				std::cout << "Pixel not within range" << std::endl;
+		}
 	}
+	
 
 	outfile << "P2\n";		//pgm type
 
@@ -249,14 +255,17 @@ void thresholding(std::vector<int> pixels)
 		outfile << countFreq[i] << " ";
 	}
 
-	outfile << "\n" << 16 << " " << 16 << "\n";		//dimensions
+	outfile << "\n" << 16 << " " << 20 << "\n";		//dimensions
 	outfile << 4 << "\n";							//maximum grey level
 
-	for (int i = 0; i < pixels.size(); i++)			//pixel data
+	for (int j = 0; j < pixels.size(); j++)			//pixel data
 	{
-		outfile << pixels[i] << "\n";
+		for (int i = 0; i < pixels[j].size(); i++)			
+		{
+			outfile << pixels[j][i] << "\t";
+		}
 	}
-
+	
 	outfile.close();
 
 }
