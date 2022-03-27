@@ -27,7 +27,9 @@ int main() {
 	//findmedian(v); // change v to name of vector
 
 	std::vector<std::vector<int>> processedData = readfile();
-	thresholding(processedData);
+	//thresholding(processedData);
+
+
 
 	return 0;
 }
@@ -146,13 +148,11 @@ std::vector<std::vector<int>> readfile()
 				}
 			}
 
+
 			rowNum = rowNum + 1;
 
 		}
 	}
-
-
-
 
 
 	std::vector<int> data = { 1,2 };
@@ -255,7 +255,7 @@ void thresholding(std::vector<std::vector<int>> pixels)
 		outfile << countFreq[i] << " ";
 	}
 
-	outfile << "\n" << 16 << " " << 20 << "\n";		//dimensions
+	outfile << "\n" << 16 << " " << 16 << "\n";		//dimensions
 	outfile << 4 << "\n";							//maximum grey level
 
 	for (int j = 0; j < pixels.size(); j++)			//pixel data
