@@ -166,13 +166,13 @@ std::vector<std::vector<int>> readfile(int &width, int &length)
 
 	std::string filename = "imagefile.pgm";
 
-	std::string filetype = "P2";
+	std::string filetype = "P5";
 
 	std::stringstream ss;
 	ss << "# Median = " << median << std::endl;
 	std::string comment = ss.str();
 
-	int maxGrey = 256;
+	int maxGrey = 255;
 
 	pgmPrint(filename, filetype, comment, width, length, maxGrey, cleanData);
 
