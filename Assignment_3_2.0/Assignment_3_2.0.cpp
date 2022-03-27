@@ -6,11 +6,12 @@
 #include <string>
 #include <sstream>
 
-std::vector<std::vector<int>> readfile();
+std::vector<std::vector<int>> readfile(int&, int&);
 std::vector<std::vector<int>> isNaN(std::vector<std::vector<std::string>>& rawData);
 int cleanImage(std::vector<std::vector<std::string>>& Data, int& i, int& j);
 void sortvector(std::vector<int>& v);
-void findmedian(std::vector<int> v);
+void findmedian(std::vector<std::vector<int>> v);
+void thresholding(std::vector <std::vector<int>>, int, int);
 
 
 
@@ -23,9 +24,16 @@ int main() {
 			std::cout << v[i] << std::endl;
 		}
 	*/
-	//findmedian(v); // change v to name of vector
+	
 
-	std::vector<std::vector<int>> processedData = readfile();
+	int width =0, length = 0;
+	std::vector<std::vector<int>> processedData = readfile(width, length);
+	findmedian(processedData);
+	thresholding(processedData, width, length);
+	
+
+
+
 	return 0;
 }
 
@@ -95,7 +103,7 @@ std::vector<std::vector<int>> isNaN(std::vector<std::vector<std::string>>& rawDa
 	return Data;
 }
 
-std::vector<std::vector<int>> readfile()
+std::vector<std::vector<int>> readfile(int &width, int &length)
 {
 	std::vector<std::vector<std::string>> rawData; //Creates 2D vector to store values
 
@@ -143,13 +151,15 @@ std::vector<std::vector<int>> readfile()
 				}
 			}
 
+
 			rowNum = rowNum + 1;
 
 		}
 	}
 
-
-
+	//included to find dimensions of the image
+	width = rawData.size();
+	length = rawData[0].size();
 
 
 	return isNaN(rawData);
@@ -159,7 +169,6 @@ void sortvector(std::vector<int>& v)
 {
 	for (int i = 0; i < v.size(); i++) // index to be checked
 	{
-
 		for (int j = i + 1; j < v.size(); j++) // starts at index after the one to be checked and goes to the end of the vector
 		{
 			if (v[j] < v[i])  // only changes the index to be checked if it finds a smaller value than the value at the i index
@@ -173,27 +182,103 @@ void sortvector(std::vector<int>& v)
 	}
 }
 
-void findmedian(std::vector<int> v)
+void findmedian(std::vector<std::vector<int>> v)
 {
-
-	int median = 0; // change to float if decimal necessary
-	sortvector(v);
-	//float mid = v[(v.size() / 2)];    if decimal of median is necessary need to have at least one value in the calculation be a float unnecessary if the vector is a float
+	std::vector<int> tempv;
+	float median = 0; 
+	for (int i = 0; i < v.size(); i++)
+	{
+		for (int j = 0; j < v[i].size(); j++)
+		{
+			tempv.push_back(v[i][j]);
+		}
+	}
+	sortvector(tempv);
+	float mid = tempv[tempv.size() / 2]; // need one operand to be a float for output to be a float
 	if (v.size() % 2 != 0) // checks if odd
 	{
-		median = v[v.size() / 2];
+		median = mid;
 	}
-	else if (v.size() % 2 == 0) // checks if even
+	else if (tempv.size() % 2 == 0) // checks if even
 	{
-		median = (v[v.size() / 2] + v[(v.size() / 2) - 1]) / 2;
+		median = (mid + tempv[(tempv.size() / 2) - 1]) / 2;
 	}
-	for (int i = 0; i < v.size(); i++) // just shows the sorted vector needs to be removed
-	{
-		std::cout << v[i] << std::endl;
-	}
+	//for (int k = 0; k < tempv.size(); k++) // just shows the sorted vector needs to be removed
+	//{
+	//	std::cout << tempv[k] << std::endl;
+	//}
 	std::cout << "median = " << median; // needs to be removed just prints median to terminal
 	std::ofstream output;
 	output.open("imagefile.pgm"); // change to name of image file
 	output << "# Median = " << median << std::endl;
 	output.close();
+}
+
+void thresholding(std::vector<std::vector<int>> pixels, int width, int length)
+{
+	int countFreq[4] = { 0, 0, 0, 0 };
+	//The 0 index in 'countFreq' corresponds to the frequency of class 1.
+	//The 1 index in 'countFreq' corresponds to the frequency of class 2.
+	//The 2 index in 'countFreq' corresponds to the frequency of class 3.
+	//The 3 index in 'countFreq' corresponds to the frequency of class 4.
+
+	std::ofstream outfile;
+	outfile.open("Segmented.pgm");
+
+	for (int j = 0; j < pixels.size(); j++)
+	{
+		for (int i = 0; i < pixels[j].size(); i++)
+		{
+			if (pixels[j][i] >= 192 && pixels[j][i] <= 255)
+			{
+				pixels[j][i] = 1;
+				countFreq[0]++;
+			}
+
+			else if (pixels[j][i] >= 128 && pixels[j][i] <= 191)
+			{
+				pixels[j][i] = 2;
+				countFreq[1]++;
+			}
+
+			else if (pixels[j][i] >= 64 && pixels[j][i] <= 127)
+			{
+				pixels[j][i] = 3;
+				countFreq[2]++;
+			}
+
+			else if (pixels[j][i] >= 0 && pixels[j][i] <= 63)
+			{
+				pixels[j][i] = 4;
+				countFreq[3]++;
+			}
+
+			else
+				std::cout << "Pixel not within range" << std::endl;
+		}
+	}
+	
+
+	outfile << "P2\n";		//pgm type
+
+	outfile << "#" << "Frequency of Classes 1,2,3,4 respectively: ";		//comment
+	for (int i = 0; i < 4; i++)
+	{
+		outfile << countFreq[i] << " ";
+	}
+
+	outfile << "\n" << width << " " << length << "\n";		//dimensions
+	outfile << 4 << "\n";							//maximum grey level
+
+	for (int j = 0; j < pixels.size(); j++)			//pixel data
+	{
+		for (int i = 0; i < pixels[j].size(); i++)			
+		{
+			outfile << pixels[j][i] << "\t";
+		}
+		outfile << "\n";
+	}
+	
+	outfile.close();
+
 }
