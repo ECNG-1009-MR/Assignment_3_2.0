@@ -11,6 +11,7 @@ std::vector<std::vector<int>> isNaN(std::vector<std::vector<std::string>>& rawDa
 int cleanImage(std::vector<std::vector<std::string>>& Data, int& i, int& j);
 void sortvector(std::vector<int>& v);
 void findmedian(std::vector<int> v);
+void thresholding(std::vector<int>);
 
 
 
@@ -197,4 +198,65 @@ void findmedian(std::vector<int> v)
 	output.open("imagefile.pgm"); // change to name of image file
 	output << "# Median = " << median << std::endl;
 	output.close();
+}
+
+void thresholding(std::vector<int> pixels)
+{
+	int countFreq[4] = { 0, 0, 0, 0 };
+	//The 0 index in 'countFreq' corresponds to the frequency of class 1.
+	//The 1 index in 'countFreq' corresponds to the frequency of class 2.
+	//The 2 index in 'countFreq' corresponds to the frequency of class 3.
+	//The 3 index in 'countFreq' corresponds to the frequency of class 4.
+
+	std::ofstream outfile;
+	outfile.open("Segmented.pgm");
+
+	for (int i = 0; i < pixels.size(); i++)
+	{
+		if (pixels[i] >= 192 && pixels[i] <= 255)
+		{
+			pixels[i] = 1;
+			countFreq[0]++;
+		}
+
+		else if (pixels[i] >= 128 && pixels[i] <= 191)
+		{
+			pixels[i] = 2;
+			countFreq[1]++;
+		}
+
+		else if (pixels[i] >= 64 && pixels[i] <= 127)
+		{
+			pixels[i] = 3;
+			countFreq[2]++;
+		}
+
+		else if (pixels[i] >= 0 && pixels[i] <= 63)
+		{
+			pixels[i] = 4;
+			countFreq[3]++;
+		}
+
+		else
+			std::cout << "Pixel not within range" << std::endl;
+	}
+
+	outfile << "P2\n";		//pgm type
+
+	outfile << "#" << "Frequency of Classes 1,2,3,4 respectively: ";		//comment
+	for (int i = 0; i < 4; i++)
+	{
+		outfile << countFreq[i] << " ";
+	}
+
+	outfile << "\n" << 16 << " " << 16 << "\n";		//dimensions
+	outfile << 4 << "\n";							//maximum grey level
+
+	for (int i = 0; i < pixels.size(); i++)			//pixel data
+	{
+		outfile << pixels[i] << "\n";
+	}
+
+	outfile.close();
+
 }
