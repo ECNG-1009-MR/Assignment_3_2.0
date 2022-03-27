@@ -97,7 +97,7 @@ std::vector<std::vector<int>> isNaN(std::vector<std::vector<std::string>>& rawDa
 
 std::vector<std::vector<int>> readfile()
 {
-	std::vector<std::vector<std::string>> rawData;
+	std::vector<std::vector<std::string>> rawData; //Creates 2D vector to store values
 
 	std::ifstream readfile;
 
@@ -152,7 +152,6 @@ std::vector<std::vector<int>> readfile()
 
 
 
-	std::vector<int> data = { 1,2 };
 	return isNaN(rawData);
 }
 
