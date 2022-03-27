@@ -172,7 +172,7 @@ std::vector<std::vector<int>> readfile(int &width, int &length)
 	ss << "# Median = " << median << std::endl;
 	std::string comment = ss.str();
 
-	int maxGrey = 255;
+	int maxGrey = 256;
 
 	pgmPrint(filename, filetype, comment, width, length, maxGrey, cleanData);
 
