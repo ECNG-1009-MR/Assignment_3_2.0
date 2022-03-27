@@ -6,12 +6,12 @@
 #include <string>
 #include <sstream>
 
-std::vector<std::vector<int>> readfile();
+std::vector<std::vector<int>> readfile(int&, int&);
 std::vector<std::vector<int>> isNaN(std::vector<std::vector<std::string>>& rawData);
 int cleanImage(std::vector<std::vector<std::string>>& Data, int& i, int& j);
 void sortvector(std::vector<int>& v);
 void findmedian(std::vector<int> v);
-void thresholding(std::vector <std::vector<int>>);
+void thresholding(std::vector <std::vector<int>>, int, int);
 
 
 
@@ -26,8 +26,9 @@ int main() {
 	*/
 	//findmedian(v); // change v to name of vector
 
-	std::vector<std::vector<int>> processedData = readfile();
-	//thresholding(processedData);
+	int width =0, length = 0;
+	std::vector<std::vector<int>> processedData = readfile(width, length);
+	thresholding(processedData, width, length);
 
 
 
@@ -100,7 +101,7 @@ std::vector<std::vector<int>> isNaN(std::vector<std::vector<std::string>>& rawDa
 	return Data;
 }
 
-std::vector<std::vector<int>> readfile()
+std::vector<std::vector<int>> readfile(int &width, int &length)
 {
 	std::vector<std::vector<std::string>> rawData;
 
@@ -154,6 +155,10 @@ std::vector<std::vector<int>> readfile()
 		}
 	}
 
+	//included to find dimensions of the image
+	width = rawData.size();
+	length = rawData[0].size();
+
 
 	std::vector<int> data = { 1,2 };
 	return isNaN(rawData);
@@ -202,7 +207,7 @@ void findmedian(std::vector<int> v)
 	output.close();
 }
 
-void thresholding(std::vector<std::vector<int>> pixels)
+void thresholding(std::vector<std::vector<int>> pixels, int width, int length)
 {
 	int countFreq[4] = { 0, 0, 0, 0 };
 	//The 0 index in 'countFreq' corresponds to the frequency of class 1.
@@ -255,7 +260,7 @@ void thresholding(std::vector<std::vector<int>> pixels)
 		outfile << countFreq[i] << " ";
 	}
 
-	outfile << "\n" << 16 << " " << 16 << "\n";		//dimensions
+	outfile << "\n" << width << " " << length << "\n";		//dimensions
 	outfile << 4 << "\n";							//maximum grey level
 
 	for (int j = 0; j < pixels.size(); j++)			//pixel data
@@ -264,6 +269,7 @@ void thresholding(std::vector<std::vector<int>> pixels)
 		{
 			outfile << pixels[j][i] << "\t";
 		}
+		outfile << "\n";
 	}
 	
 	outfile.close();
