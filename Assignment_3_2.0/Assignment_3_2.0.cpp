@@ -100,7 +100,7 @@ std::vector<std::vector<int>> readfile(int &width, int &length)
 
 	std::ifstream readfile;
 
-	readfile.open("imagefileoriginal.txt"); //Opens file so it can be read
+	readfile.open("imagefile.txt"); //Opens file so it can be read
 
 	if (!readfile.is_open())
 		std::cout << "File not found" << std::endl;
@@ -135,7 +135,7 @@ std::vector<std::vector<int>> readfile(int &width, int &length)
 
 				//Since the while loop termination condition is when there are no longer any delims, then there is a single value left in the string
 				//This if function checks for this termination condition and then equates the token to the string so the last value in the sting can be pushed back into the vector.
-				if (row.find(dlim) == std::string::npos) {
+				if (row.find(dlim) == std::string::npos && row.substr(0,row.size()) != "") {
 					token = row;
 					std::cout << "token: " << token << std::endl;
 					rawData[rowNum].push_back(token);
