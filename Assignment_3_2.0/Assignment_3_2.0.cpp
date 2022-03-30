@@ -108,7 +108,7 @@ std::vector<std::vector<int>> readfile(int &width, int &length)
 
 	std::ifstream readfile;
 
-	readfile.open("imagefile.txt"); //Opens file so it can be read
+	readfile.open("imagefileoriginal.txt"); //Opens file so it can be read
 
 	if (!readfile.is_open())
 		std::cout << "File not found" << std::endl;
@@ -279,7 +279,6 @@ void thresholding(std::vector<std::vector<int>> pixels, int width, int length)
 	std::string comment = sscomment.str();
 
 	pgmPrint("Segmented.pgm", "P2", comment, width, length, 4, pixels);
-
 	
 }
 
@@ -308,6 +307,5 @@ void pgmPrint(std::string filename, std::string magicNum, std::string comment, i
 	}
 
 	outfile.close();
-
 
 }
