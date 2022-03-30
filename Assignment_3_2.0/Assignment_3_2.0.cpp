@@ -12,7 +12,7 @@ int cleanImage(std::vector<std::vector<std::string>>& Data, int& i, int& j);
 void sortvector(std::vector<int>& v);
 float findmedian(std::vector<std::vector<int>> v);
 void thresholding(std::vector <std::vector<int>>, int, int);
-void pgmPrint(std::string &filename, std::string &MagicNum, std::string &comment, int& width, int& length, int& maxGrey, std::vector<std::vector<int>>& pixelData);
+void pgmPrint(std::string filename, std::string MagicNum, std::string &comment, int& width, int& length, int maxGrey, std::vector<std::vector<int>>& pixelData);
 
 
 
@@ -164,17 +164,11 @@ std::vector<std::vector<int>> readfile(int &width, int &length)
 
 	float median = findmedian(cleanData);
 
-	std::string filename = "imagefile.pgm";
-
-	std::string filetype = "P2";
-
 	std::stringstream ss;
 	ss << "# Median = " << median << std::endl;
 	std::string comment = ss.str();
 
-	int maxGrey = 255;
-
-	pgmPrint(filename, filetype, comment, width, length, maxGrey, cleanData);
+	pgmPrint("imagefile.pgm", "P2", comment, width, length, 255, cleanData);
 
 	return cleanData;
 }
@@ -299,7 +293,7 @@ void thresholding(std::vector<std::vector<int>> pixels, int width, int length)
 
 }
 
-void pgmPrint(std::string& filename, std::string& magicNum, std::string& comment, int& width, int& length, int& maxGrey, std::vector<std::vector<int>>& pixelData)
+void pgmPrint(std::string filename, std::string magicNum, std::string& comment, int& width, int& length, int maxGrey, std::vector<std::vector<int>>& pixelData)
 {
 	std::ofstream outfile;
 
