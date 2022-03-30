@@ -12,7 +12,7 @@ int cleanImage(std::vector<std::vector<std::string>>& Data, int& i, int& j);
 void sortvector(std::vector<int>& v);
 float findmedian(std::vector<std::vector<int>> v);
 void thresholding(std::vector <std::vector<int>>, int, int);
-void pgmPrint(std::string filename, std::string MagicNum, std::string &comment, int& width, int& length, int maxGrey, std::vector<std::vector<int>>& pixelData);
+void pgmPrint(std::string filename, std::string MagicNum, std::string comment, int width, int length, int maxGrey, std::vector<std::vector<int>> pixelData);
 
 
 
@@ -100,7 +100,7 @@ std::vector<std::vector<int>> readfile(int &width, int &length)
 
 	std::ifstream readfile;
 
-	readfile.open("imagefile.txt"); //Opens file so it can be read
+	readfile.open("imagefileoriginal.txt"); //Opens file so it can be read
 
 	if (!readfile.is_open())
 		std::cout << "File not found" << std::endl;
@@ -224,9 +224,6 @@ void thresholding(std::vector<std::vector<int>> pixels, int width, int length)
 	//The 2 index in 'countFreq' corresponds to the frequency of class 3.
 	//The 3 index in 'countFreq' corresponds to the frequency of class 4.
 
-	std::ofstream outfile;
-	outfile.open("Segmented.pgm");
-
 	for (int j = 0; j < pixels.size(); j++)
 	{
 		for (int i = 0; i < pixels[j].size(); i++)
@@ -260,32 +257,21 @@ void thresholding(std::vector<std::vector<int>> pixels, int width, int length)
 		}
 	}
 	
+	std::stringstream sscomment;
 
-	outfile << "P2\n";		//pgm type
-
-	outfile << "#" << "Frequency of Classes 1,2,3,4 respectively: ";		//comment
+	sscomment << "#" << "Frequency of Classes 1,2,3,4 respectively: ";		//comment
 	for (int i = 0; i < 4; i++)
 	{
-		outfile << countFreq[i] << " ";
+		sscomment << countFreq[i] << " ";
 	}
 
-	outfile << "\n" << width << " " << length << "\n";		//dimensions
-	outfile << 4 << "\n";							//maximum grey level
+	std::string comment = sscomment.str();
 
-	for (int j = 0; j < pixels.size(); j++)			//pixel data
-	{
-		for (int i = 0; i < pixels[j].size(); i++)			
-		{
-			outfile << pixels[j][i] << "\t";
-		}
-		outfile << "\n";
-	}
+	pgmPrint("Segmented.pgm", "P2", comment, width, length, 4, pixels);
 	
-	outfile.close();
-
 }
 
-void pgmPrint(std::string filename, std::string magicNum, std::string& comment, int& width, int& length, int maxGrey, std::vector<std::vector<int>>& pixelData)
+void pgmPrint(std::string filename, std::string magicNum, std::string comment, int width, int length, int maxGrey, std::vector<std::vector<int>> pixelData)
 {
 	std::ofstream outfile;
 
@@ -310,6 +296,5 @@ void pgmPrint(std::string filename, std::string magicNum, std::string& comment, 
 	}
 
 	outfile.close();
-
 
 }
