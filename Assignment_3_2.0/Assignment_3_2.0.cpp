@@ -232,9 +232,6 @@ void thresholding(std::vector<std::vector<int>> pixels, int width, int length)
 	//The 2 index in 'countFreq' corresponds to the frequency of class 3.
 	//The 3 index in 'countFreq' corresponds to the frequency of class 4.
 
-	std::ofstream outfile;
-	outfile.open("Segmented.pgm");
-
 	for (int j = 0; j < pixels.size(); j++)
 	{
 		for (int i = 0; i < pixels[j].size(); i++)
