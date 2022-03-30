@@ -17,15 +17,7 @@ void pgmPrint(std::string filename, std::string MagicNum, std::string &comment, 
 
 
 int main() {
-	//std::vector<int> v{ 1,3,6,2,5,7,8,12 }; // if vector from part 1 is float need to change function declarations
-	/* // needs to be removed just shows that the std sort function and the written function has the same output
-		std::sort(v.begin(), v.end());
-		for (int i = 0; i < v.size(); i++)
-		{
-			std::cout << v[i] << std::endl;
-		}
-	*/
-	
+
 
 	int width =0, length = 0;
 	std::vector<std::vector<int>> processedData = readfile(width, length);
@@ -133,7 +125,7 @@ std::vector<std::vector<int>> readfile(int &width, int &length)
 			std::string token;
 			while (row.find(dlim) != std::string::npos) //Loops until there isn't any more deliminators in the string
 			{
-				//size_t tmp = row.find(dlim);
+			
 
 				token = row.substr(0, row.find(dlim)); //Token will be equal to the value between the delims
 				std::cout << "token: " << token << std::endl;
