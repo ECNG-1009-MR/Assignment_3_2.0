@@ -162,7 +162,7 @@ std::vector<std::vector<int>> readfile(int &width, int &length)
 	ss << "# Median = " << median << std::endl;
 	std::string comment = ss.str();
 
-	pgmPrint("imagefile.pgm", "P2", comment, width, length, 255, cleanData);
+	pgmPrint("Processed Image.pgm", "P2", comment, width, length, 255, cleanData);
 
 	return cleanData;
 }
@@ -269,7 +269,7 @@ void thresholding(std::vector<std::vector<int>> pixels, int width, int length)
 
 	std::string comment = sscomment.str();
 
-	pgmPrint("Segmented.pgm", "P2", comment, width, length, 4, pixels);
+	pgmPrint("Segmented Image.pgm", "P2", comment, width, length, 4, pixels);
 	
 }
 
