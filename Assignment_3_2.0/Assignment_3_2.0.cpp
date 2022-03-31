@@ -12,7 +12,7 @@ int cleanImage(std::vector<std::vector<std::string>>& Data, int& i, int& j);
 void sortvector(std::vector<int>& v);
 float findmedian(std::vector<std::vector<int>> v);
 void thresholding(std::vector <std::vector<int>>, int, int);
-void pgmPrint(std::string filename, std::string MagicNum, std::string comment, int width, int length, int maxGrey, std::vector<std::vector<int>> pixelData);
+void pgmPrint(std::string filename, std::string MagicNum, std::string comment, int width, int height, int maxGrey, std::vector<std::vector<int>> pixelData);
 
 
 
@@ -110,7 +110,7 @@ std::vector<std::vector<int>> readfile(int &width, int &length)
 
 		int rowNum = 0;
 
-		while (!readfile.eof())
+		while ((!readfile.eof()))
 		{
 
 			std::string row = "";
@@ -139,18 +139,20 @@ std::vector<std::vector<int>> readfile(int &width, int &length)
 					token = row;
 					std::cout << "token: " << token << std::endl;
 					rawData[rowNum].push_back(token);
+					
 				}
 			}
 
 
 			rowNum = rowNum + 1;
 
-		}
+		} 
 	}
+	
 
 	//included to find dimensions of the image
-	width = rawData.size();
-	length = rawData[0].size();
+	 length = rawData.size();
+	 width = rawData[0].size();
 
 	std::vector<std::vector<int>> cleanData = isNaN(rawData);
 
@@ -271,7 +273,7 @@ void thresholding(std::vector<std::vector<int>> pixels, int width, int length)
 	
 }
 
-void pgmPrint(std::string filename, std::string magicNum, std::string comment, int width, int length, int maxGrey, std::vector<std::vector<int>> pixelData)
+void pgmPrint(std::string filename, std::string magicNum, std::string comment, int width, int height, int maxGrey, std::vector<std::vector<int>> pixelData)
 {
 	std::ofstream outfile;
 
@@ -282,7 +284,7 @@ void pgmPrint(std::string filename, std::string magicNum, std::string comment, i
 	outfile << comment << "\n";			//comment
 	
 
-	outfile << width << " " << length << "\n";		//dimensions
+	outfile << width << " " << height << "\n";		//dimensions
 	
 	outfile << maxGrey << "\n";						//maximum grey level
 
