@@ -1,11 +1,11 @@
 #include <vector>
 #include <iostream>
-#include <algorithm> // used for std::sort function can be removed
 #include <fstream>
 #include <iostream>
 #include <string>
 #include <sstream>
 
+//Function forward declaration
 std::vector<std::vector<int>> readfile(int&, int&);
 std::vector<std::vector<int>> isNaN(std::vector<std::vector<std::string>>& rawData);
 int cleanImage(std::vector<std::vector<std::string>>& Data, int& i, int& j);
@@ -18,83 +18,17 @@ void pgmPrint(std::string filename, std::string MagicNum, std::string comment, i
 
 int main() {
 
-
 	int width =0, length = 0;
 	std::vector<std::vector<int>> processedData = readfile(width, length);
 	
 	thresholding(processedData, width, length);
 	
-
-
-
 	return 0;
 }
 
+//-------------- QUESTION 1 ----------------
 
-int cleanImage(std::vector<std::vector<std::string>>& rawData, int& i, int& j)
-{
-	int sum = 0;
-	int count = 0;
-
-	for (int k = -1; k <= 1; k++)
-	{
-		for (int l = -1; l <= 1; l++)
-		{
-			int ypix = i + k;
-			int xpix = j + l;
-
-			if (ypix >= 0 && ypix < rawData.size() && xpix >= 0 && xpix < rawData[i].size()) {
-
-				if (rawData[ypix][xpix] != "NaN") {
-					sum = stoi(rawData[ypix][xpix]) + sum;
-					count++;
-				}
-			}
-
-		}
-
-	}
-
-	int avg = sum / count;
-	return avg;
-
-}
-
-std::vector<std::vector<int>> isNaN(std::vector<std::vector<std::string>>& rawData)
-{
-
-	std::vector<std::vector<int>> Data;
-
-	for (int i = 0; i < rawData.size(); i++) {
-
-		Data.push_back(std::vector<int>());
-
-		for (int j = 0; j < rawData[i].size(); j++) {
-
-
-			if (rawData[i][j] == "NaN")
-			{
-				int avg = cleanImage(rawData, i, j);
-				Data[i].push_back(avg);
-
-			}
-			else
-			{
-				Data[i].push_back(std::stoi(rawData[i][j]));
-
-			}
-
-			std::cout << Data[i][j] << '\t';
-
-		}
-
-		std::cout << std::endl;
-
-	}
-	return Data;
-}
-
-std::vector<std::vector<int>> readfile(int &width, int &length)
+std::vector<std::vector<int>> readfile(int& width, int& length)
 {
 	std::vector<std::vector<std::string>> rawData; //Creates 2D vector to store values
 
@@ -117,54 +51,135 @@ std::vector<std::vector<int>> readfile(int &width, int &length)
 
 			std::getline(readfile, row);
 
-			std::cout << row << std::endl << std::endl;// Test line to see the vectors 
-
+			
 			rawData.push_back(std::vector<std::string>());
 
 			std::string dlim = "\t";
 			std::string token;
 			while (row.find(dlim) != std::string::npos) //Loops until there isn't any more deliminators in the string
 			{
-			
+
 
 				token = row.substr(0, row.find(dlim)); //Token will be equal to the value between the delims
-				std::cout << "token: " << token << std::endl;
+				//std::cout << "token: " << token << std::endl; //Used to make sure the string was being split into its values
 				rawData[rowNum].push_back(token);
 
 				row.erase(0, row.find(dlim) + dlim.length()); // Erases the value that was just pushed into the vector from the string
+				
+			/*	Since the while loop termination condition is when there are no delims reaining in the string,
+				then if there is a single value left in the string it won't be pushed back into the vector.
+				This if function checks for this termination condition and if it has a value still in the string
+				and then equates the token to the string so the last value in the sting can be pushed back into the vector. */
 
-				//Since the while loop termination condition is when there are no longer any delims, then there is a single value left in the string
-				//This if function checks for this termination condition and then equates the token to the string so the last value in the sting can be pushed back into the vector.
-				if (row.find(dlim) == std::string::npos && row.substr(0,row.size()) != "") {
+				if (row.find(dlim) == std::string::npos && row.substr(0, row.size()) != "") {
 					token = row;
-					std::cout << "token: " << token << std::endl;
+					//std::cout << "token: " << token << std::endl; //Used to make sure the string was being split into its values
 					rawData[rowNum].push_back(token);
-					
+
 				}
 			}
 
 			rowNum = rowNum + 1;
 
-		} 
+		}
 	}
-	
+
 
 	//included to find dimensions of the image
-	 length = rawData.size();
-	 width = rawData[0].size();
+	length = rawData.size();
+	width = rawData[0].size();
 
 	std::vector<std::vector<int>> cleanData = isNaN(rawData);
 
 	float median = findmedian(cleanData);
 
 	std::stringstream ss;
-	ss << "# Median = " << median << std::endl;
+	ss << "# Median = " << median;
 	std::string comment = ss.str();
 
 	pgmPrint("Processed Image.pgm", "P2", comment, width, length, 255, cleanData);
 
 	return cleanData;
 }
+
+
+
+
+std::vector<std::vector<int>> isNaN(std::vector<std::vector<std::string>>& rawData)
+{
+
+	std::cout << "CLEAN DATA:" << std::endl; 
+
+	std::vector<std::vector<int>> Data;
+
+	for (int i = 0; i < rawData.size(); i++) {
+
+		Data.push_back(std::vector<int>());
+
+		for (int j = 0; j < rawData[i].size(); j++) {
+
+
+			if (rawData[i][j] == "NaN")
+			{
+				int avg = cleanImage(rawData, i, j); //If a NaN value is found then the clean function is called
+				Data[i].push_back(avg);				//Pushes the calculated clean value into the clean data vector
+
+			}
+			else
+			{
+				Data[i].push_back(std::stoi(rawData[i][j])); //If value is not corrupted then it is converted to an int and pushed back
+
+			}
+
+			std::cout << Data[i][j] << '\t'; 
+
+		}
+
+		std::cout << std::endl;
+
+	}
+	return Data;
+}
+
+
+
+int cleanImage(std::vector<std::vector<std::string>>& rawData, int& i, int& j)
+{
+	//This function cleans the image by estimating a the corrupted value using the mean filter method
+
+	int sum = 0;
+	int count = 0;
+
+	for (int k = -1; k <= 1; k++)
+	{
+		for (int l = -1; l <= 1; l++)
+		{						//Gets the position index for each value surrounding the NaN using the two for loops above
+			int ypix = i + k;   // ypix| x  x  x
+			int xpix = j + l;   //     | x NaN x
+								//     | x  x  x
+								//      ----------> xpix
+			if (ypix >= 0 && ypix < rawData.size() && xpix >= 0 && xpix < rawData[i].size())	//Ensures that each position index falls within the vector size
+			{																					//in the event the NaN is at on the edge of the image	
+				if (rawData[ypix][xpix] != "NaN")  //Makes sure the value is not a NaN so it could be used in the avg calculation
+				{
+					sum = stoi(rawData[ypix][xpix]) + sum;
+					count++;
+				}
+			}
+
+		}
+
+	}
+
+	int avg = sum / count;
+	return avg;
+
+}
+
+
+
+//-------------- QUESTION 2 ----------------
+
 
 void sortvector(std::vector<int>& v)
 {
@@ -204,18 +219,16 @@ float findmedian(std::vector<std::vector<int>> v)
 	{
 		median = (mid + tempv[(tempv.size() / 2) - 1]) / 2;
 	}
-	//for (int k = 0; k < tempv.size(); k++) // just shows the sorted vector needs to be removed
-	//{
-	//	std::cout << tempv[k] << std::endl;
-	//}
+	
 	std::cout << "median = " << median << std::endl; // needs to be removed just prints median to terminal
-	//std::ofstream output;
-	//output.open("imagefile.pgm"); // change to name of image file
-	//output << "# Median = " << median << std::endl;
-	//output.close();
-
+	
 	return median;
 }
+
+
+
+//-------------- QUESTION 3 ----------------
+
 
 void thresholding(std::vector<std::vector<int>> pixels, int width, int length)
 {
