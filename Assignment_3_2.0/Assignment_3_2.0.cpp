@@ -100,7 +100,7 @@ std::vector<std::vector<int>> readfile(int &width, int &length)
 
 	std::ifstream readfile;
 
-	readfile.open("imagefile.txt"); //Opens file so it can be read
+	readfile.open("pepper.txt"); //Opens file so it can be read
 
 	if (!readfile.is_open())
 		std::cout << "File not found" << std::endl;
@@ -142,7 +142,6 @@ std::vector<std::vector<int>> readfile(int &width, int &length)
 					
 				}
 			}
-
 
 			rowNum = rowNum + 1;
 
