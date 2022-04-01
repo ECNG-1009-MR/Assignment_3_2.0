@@ -1,3 +1,16 @@
+/*Program by Group MR
+Members:
+1)Nathan Ragoobar
+2)Nyckel St. Louis
+3)Matthias Elliot
+4)Nikolai Pillai
+5)Quinton Aleong
+6)Rajiv Sahadeo
+7)Chad Moore
+8)Matthew Williams
+*/
+
+
 #include <vector>
 #include <iostream>
 #include <fstream>
@@ -25,6 +38,7 @@ int main() {
 	
 	return 0;
 }
+
 
 //-------------- QUESTION 1 ----------------
 
